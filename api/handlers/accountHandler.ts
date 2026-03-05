@@ -1,3 +1,5 @@
+// archived file for contrast with service
+
 import { query } from "../utils/db";
 
 export const getAccount = async (accountID: string) => {
