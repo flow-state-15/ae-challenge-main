@@ -25,6 +25,7 @@ export async function withdraw(req: Request, res: Response) {
 }
 
 export async function deposit(req: Request, res: Response) {
+    console.log("Deposit request received");
     const { accountID } = req.params;
     const { amount } = req.body;
     const { error } = transactionSchema.validate(req.body);
@@ -33,7 +34,10 @@ export async function deposit(req: Request, res: Response) {
     }
 
     try {
+        console.log("in deposit query attempt");
         const updatedAccount = await depositService(accountID, amount);
+        console.log("deposit query successful");
+        console.log("updatedAccount: ", updatedAccount);
         return res.status(200).send(updatedAccount)
     } catch (err) {
         const error = err as Error;
