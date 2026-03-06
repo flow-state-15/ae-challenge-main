@@ -1,5 +1,5 @@
 -- CREATE TABLE
-DROP TABLE IF EXISTS accounts;
+DROP TABLE IF EXISTS accounts, transactions;
 CREATE TABLE accounts (
     account_number INTEGER PRIMARY KEY,
     name VARCHAR NOT NULL,
@@ -8,13 +8,28 @@ CREATE TABLE accounts (
     credit_limit INTEGER
 );
 
+/*
+transactions table is the bank's ledger of all transactions (movement of money).
+balances are derived from transactions table during an audit, and it allows double entry bookkeeping.
+the system account represents the bank's liabilities.
+*/
+CREATE TABLE transactions (
+    transaction_id INTEGER PRIMARY KEY,
+    from_account INTEGER NOT NULL REFERENCES accounts(account_number),
+    to_account INTEGER NOT NULL REFERENCES accounts(account_number),
+    type VARCHAR NOT NULL CHECK (type IN ('deposit', 'withdrawal')),
+    amount INTEGER NOT NULL CHECK (amount > 0),
+    timestamp NOT NULL TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
 ALTER TABLE accounts ADD CONSTRAINT verify_type
-CHECK (type IN ('checking', 'savings', 'credit'));
+CHECK (type IN ('checking', 'savings', 'credit', 'system'));
 
 -- LOAD DATAS
-INSERT INTO accounts 
+INSERT INTO accounts
     (account_number, name, amount, type)
 VALUES
+    (0, 'System', -90000, 'system'),
     (1, 'Johns Checking', 1000, 'checking'),
     (2, 'Janes Savings', 2000, 'savings'),
     (4, 'Bobs Checking', 40000, 'checking'),

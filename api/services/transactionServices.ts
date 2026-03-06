@@ -11,12 +11,13 @@ export async function withdrawService(accountId: string, amount: number) {
     to update this account at the same time. Sql will lock the row and queue the requests.
     This enforces Isolation.
     */
-  const account = await pool.query(`
+  const account = await pool.query(
+    `
     UPDATE accounts
     SET amount = amount - $1
     WHERE account_number = $2
     RETURNING *`,
-    [amount, accountId]
+    [amount, accountId],
   );
 
   if (account.rowCount === 0) {
@@ -28,11 +29,12 @@ export async function withdrawService(accountId: string, amount: number) {
 
 export async function depositService(accountId: string, amount: number) {
   // db enforces isolation by locking the row during the update
-  const account = await pool.query(`
-    UPDATE accounts
-    SET amount = amount + $1
-    WHERE account_number = $2
-    RETURNING *`,
+  const account = await pool.query(
+    `
+        UPDATE accounts
+        SET amount = amount + $1
+        WHERE account_number = $2
+        RETURNING *`,
     [amount, accountId],
   );
   console.log("depositService, account: ", account);
@@ -71,3 +73,98 @@ export async function transferService(
     client.release();
   }
 }
+
+/*
+Note: when we deposit, we credit system and debit user accounts.
+Credits are outflows (negative) and debits are inflows (positive).
+I'm keeping service errors colocated with queries for better visibility and debugging.
+User facing errors are thrown in the controller.
+*/
+export async function depositService2(accountId: string, amount: number) {
+  const client = await pool.connect();
+  try {
+    // creating atomic transaction
+    await client.query("BEGIN");
+
+    // ledger entry first
+    const transaction = await client.query(
+        `INSERT INTO transactions (from_account, to_account, type, amount)
+        VALUES ($1, $2, $3, $4)
+        RETURNING *`,
+      [0, accountId, "deposit", amount],
+    );
+
+    if (transaction.rowCount === 0) {
+      throw new Error("Transaction failed");
+    }
+
+    // run balance updates
+    const userAccount = await client.query(
+        `UPDATE accounts SET amount = amount + $1
+        WHERE account_number = $2
+        RETURNING *`,
+        [amount, accountId]
+    );
+    const systemAccount = await client.query(
+        `UPDATE accounts SET amount = amount - $1
+        WHERE account_number = $2
+        RETURNING *`,
+        [amount, 0]);
+
+    if (userAccount.rowCount === 0 || systemAccount.rowCount === 0) {
+      throw new Error("Update failed");
+    }
+
+    await client.query("COMMIT");
+    return userAccount.rows[0];
+  } catch (err) {
+    console.error(err);
+    await client.query("ROLLBACK");
+    throw err;
+  } finally {
+    client.release();
+  }
+}
+
+export async function withdrawService2(accountId: string, amount: number) {
+    const client = await pool.connect();
+    try {
+      await client.query("BEGIN");
+
+      const transaction = await client.query(
+          `INSERT INTO transactions (from_account, to_account, type, amount)
+          VALUES ($1, $2, $3, $4)
+          RETURNING *`,
+        [accountId, 0, "withdrawal", amount],
+      );
+  
+      if (transaction.rowCount === 0) {
+        throw new Error("Transaction failed");
+      }
+
+      const userAccount = await client.query(
+          `UPDATE accounts SET amount = amount - $1
+          WHERE account_number = $2
+          RETURNING *`,
+          [amount, accountId]
+      );
+      const systemAccount = await client.query(
+          `UPDATE accounts SET amount = amount + $1
+          WHERE account_number = $2
+          RETURNING *`,
+          [amount, 0]);
+  
+      if (userAccount.rowCount === 0 || systemAccount.rowCount === 0) {
+        throw new Error("Update failed");
+      }
+  
+      await client.query("COMMIT");
+      return userAccount.rows[0];
+    } catch (err) {
+      console.error(err);
+      await client.query("ROLLBACK");
+      throw err;
+    } finally {
+      client.release();
+    }
+  }
