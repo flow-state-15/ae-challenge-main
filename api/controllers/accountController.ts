@@ -1,22 +1,13 @@
 import { Request, Response } from "express";
-import Joi, { Schema } from "joi";
 import { getAccountService } from "../services/accountService";
-
-const getAccountSchema: Schema = Joi.object({
-  accountID: Joi.number().positive().min(1).required(),
-});
+import { validateAccountID } from "../utils/validations";
 
 export async function getAccount(req: Request, res: Response) {
   const { accountID } = req.params;
-  const parsedAccountId = parseInt(accountID, 10);
-
-  const { error } = getAccountSchema.validate({ accountID: parsedAccountId });
-  if (error) {
-    return res.status(400).send("Invalid account ID");
-  }
+  const validatedAccountID = validateAccountID(accountID);
 
   try {
-    const account = await getAccountService(parsedAccountId);
+    const account = await getAccountService(validatedAccountID);
     return res.status(200).send(account);
   } catch (err) {
     const error = err as Error;
