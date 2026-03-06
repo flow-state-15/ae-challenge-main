@@ -1,21 +1,24 @@
 import { Request, Response } from "express";
 import Joi, { Schema } from "joi";
-import { depositService, depositService2, withdrawService, withdrawService2 } from "../services/transactionServices";
+import { depositService, withdrawService } from "../services/transactionServices";
 
 const transactionSchema: Schema = Joi.object({
-    amount: Joi.number().required(),
+    amount: Joi.number().positive().min(1).required(),
+    accountID: Joi.number().positive().min(1).required(),
 });
 
 export async function withdraw(req: Request, res: Response) {
     const { accountID } = req.params;
     const { amount } = req.body;
-    const { error } = transactionSchema.validate(req.body);
+    const parsedAccountId = parseInt(accountID, 10);
+
+    const { error } = transactionSchema.validate({ accountID: parsedAccountId, amount });
     if (error) {
         return res.status(400).send(error.details[0].message);
     }
 
     try {
-        const updatedAccount = await withdrawService2(accountID, amount)
+        const updatedAccount = await withdrawService(parsedAccountId, amount)
         console.log("withdrawal result: ", updatedAccount);
         return res.status(200).send(updatedAccount)
     } catch (err) {
@@ -28,13 +31,15 @@ export async function withdraw(req: Request, res: Response) {
 export async function deposit(req: Request, res: Response) {
     const { accountID } = req.params;
     const { amount } = req.body;
-    const { error } = transactionSchema.validate(req.body);
+    const parsedAccountId = parseInt(accountID, 10);
+
+    const { error } = transactionSchema.validate({ accountID: parsedAccountId, amount });
     if (error) {
         return res.status(400).send(error.details[0].message);
     }
 
     try {
-        const updatedAccount = await depositService2(accountID, amount);
+        const updatedAccount = await depositService(parsedAccountId, amount);
         console.log("deposit result: ", updatedAccount);
         return res.status(200).send(updatedAccount)
     } catch (err) {

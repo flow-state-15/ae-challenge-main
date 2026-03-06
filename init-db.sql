@@ -12,14 +12,21 @@ CREATE TABLE accounts (
 transactions table is the bank's ledger of all transactions (movement of money).
 balances are derived from transactions table during an audit, and it allows double entry bookkeeping.
 the system account represents the bank's liabilities.
+
+Note: since the system account is always the other side of the transaction,
+we've created a hot row that is frequently locked and will be a bottleneck at scale.
+To scale, we'd need a different db architecture that partitions internal logistics (separate tables).
 */
+
+-- TODO: every transaction needs a unique id from the client to protect against client retries after commit.
+-- TODO: not handling cents or validating, we're using integers.
 CREATE TABLE transactions (
-    transaction_id INTEGER PRIMARY KEY,
+    transaction_id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     from_account INTEGER NOT NULL REFERENCES accounts(account_number),
     to_account INTEGER NOT NULL REFERENCES accounts(account_number),
     type VARCHAR NOT NULL CHECK (type IN ('deposit', 'withdrawal')),
     amount INTEGER NOT NULL CHECK (amount > 0),
-    timestamp NOT NULL TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 ALTER TABLE accounts ADD CONSTRAINT verify_type
