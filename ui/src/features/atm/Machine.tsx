@@ -3,43 +3,100 @@ import { Box, Typography } from "@mui/material";
 
 import Display from "./Display";
 import Keypad from "./Keypad";
-import { RenderProps, Screen } from "../../types/AppTypes";
+import { InputActions, Screen } from "../../types/AppTypes";
 import { initialMachineState, machineReducer, deriveRenderProps } from "./machineState";
 
 export default function Machine() {
     const [state, dispatch] = useReducer(machineReducer, initialMachineState);
-    const [renderProps, setRenderProps] = useState<RenderProps>();
+	const account = {accountNumber: 1234567890, name: "John Doe", amount: 1000, type: "Checking", creditLimit: 1000} // TODO: get account from query
+    
+	const renderProps = deriveRenderProps(state, account);
+	console.log("renderProps", renderProps);
+    // on logout these functions will do nothing
+    // if there's not render props for the selection button, there shoud be no function loaded into state
+    const handleSelectLeft = () => {
+        if (state.screen === Screen.Menu) {
+            dispatch({ type: Screen.Deposit, payload: "" });
+        }
 
-	// on logout these functions will do nothing
-	// if there's not render props for the selection button, there shoud be no function loaded into state
-    handleSelectLeft = (select: string) => {
-		// depending on screen, dispatches deposit or cancel, or does nothing
-		if (state.screen === Screen.Menu) {
-			dispatch({ type: "DEPOSIT" });
-		} else if (state.screen === Screen.Deposit) {
-			dispatch({ type: "CANCEL" });
+        if (state.screen === Screen.Deposit) {
+            dispatch({ type: Screen.Menu, payload: "" });
+        }
+    };
+
+    const handleSelectRight = () => {
+        if (state.screen === Screen.Menu) {
+            return dispatch({ type: Screen.Withdraw, payload: "" });
+        }
+
+        if (state.screen === Screen.Withdraw) {
+            // cancels withdraw
+            return dispatch({ type: Screen.Menu, payload: "" });
+        }
+    };
+
+    const handleSelectLogout = () => {
+        if (state.screen === Screen.LoggedOut) return;
+
+        // TODO: call logout query
+        dispatch({ type: Screen.LoggedOut, payload: "" });
+    };
+
+    const handleClear = () => {
+        dispatch({ type: InputActions.SetInput, payload: "" });
+    };
+
+    const handleEnter = () => {
+		// maybe call a settimeout to go back to menu on success
+		// errors get displayed and no screen change. only input change
+		if (state.screen === Screen.LoggedOut) {
+			// on success
+			// TODO: call login query with current input state
+			const success = state.input === "1234567890";
+			if (success) {
+				return dispatch({ type: Screen.Menu, payload: "" })
+			}
+
+			if (!success) {
+				return dispatch({ type: InputActions.SetInput, payload: "Error Logging in" })
+			}
 		}
-	};
 
-	handleSelectRight = (select: string) => {
-		// depending on screen, dispatches withdrawl or cancel, or does nothing
-	};
+        if (state.screen === Screen.Deposit) {
+            // TODO: call deposit query with current input state
+			// TODO: on error dispatch server message
+			const result = "testing server"
 
-	handleSelectCenter = (select: string) => {
-		// depending on screen, calls logout or does nothing
-	};
+			if (false) {
+				return dispatch({type: InputActions.SetInput, payload: result})
+			}
+			// success response
+            return dispatch({ type: Screen.Menu, payload: "" });
+        }
 
-    handleClear = (clear: string) => {};
+        if (state.screen === Screen.Withdraw) {
+            //TODO: call withdraw query with current input state
+            return dispatch({ type: InputActions.SetInput, payload: "" });
+        }
+    };
 
-    handleEnter = (enter: string) => {};
-
-    handleNumber = (number: string) => {};
+    const handleNumber = (number: string) => {
+        if (
+            state.screen === Screen.LoggedOut ||
+            state.screen === Screen.Deposit ||
+            state.screen === Screen.Withdraw
+        ) {
+            dispatch({ type: InputActions.AppendInput, payload: number });
+        }
+    };
 
     return (
         <Box sx={machineStyles}>
             <Display renderProps={renderProps} />
             <Keypad
-                onSelect={handleSelect}
+                onLeft={handleSelectLeft}
+                onRight={handleSelectRight}
+                onCenter={handleSelectLogout}
                 onClear={handleClear}
                 onEnter={handleEnter}
                 onNumber={handleNumber}

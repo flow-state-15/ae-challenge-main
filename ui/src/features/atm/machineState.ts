@@ -84,127 +84,97 @@ logged in select buttons:
 				- if error, change display body to [server error message] || "Deposit failed"
 */
 
-import { Account, MachineState, ReducerAction, RenderProps, Screen } from "../../types/AppTypes";
+import { Account, InputActions, MachineState, ReducerAction, RenderProps, Screen } from "../../types/AppTypes";
 
 export const initialMachineState: MachineState = {
     screen: Screen.LoggedOut,
-    selection: "NONE",
     input: "",
 };
 
 export function machineReducer(state = initialMachineState, action: ReducerAction): MachineState {
+	console.log("machineReducer", state, action);
     switch (action.type) {
-        case "SELECT_LEFT":
-            return {
-                ...state,
-                selection: "SELECT_LEFT",
-            };
-        case "SELECT_RIGHT":
-            return {
-                ...state,
-                selection: "SELECT_RIGHT",
-            };
-        case "SELECT_CENTER":
-            return {
-                ...state,
-                selection: "SELECT_CENTER",
-            };
-        case "ENTER":
-            return {
-                ...state,
-                selection: "ENTER",
-				screen: Screen.Enter,
-				input: "",
-            };
-        case "CANCEL":
-            return {
-                ...state,
-                selection: "CANCEL",
-				input: "",
-				screen: Screen.Menu,
-            };
-        case "CLEAR":
-            return {
-                ...state,
-                input: "",
-            };
-        case "INPUT":
-            return {
-                ...state,
-                input: state.input + action.payload,
-            };
-        case "SERVER_MESSAGE":
-            return {
-                ...state,
-                input: action.payload,
-            };
-		case "RESET":
+		case Screen.LoggedOut:
 			return initialMachineState;
+		case Screen.Menu:
+			return {
+				...state,
+				screen: Screen.Menu,
+				input: action.payload,
+			}
+		case Screen.Withdraw:
+			return {
+				...state,
+				screen: Screen.Withdraw,
+			}
+		case Screen.Deposit:
+			return {
+				...state,
+				screen: Screen.Deposit,
+			}
+		case InputActions.AppendInput:
+			return {
+				...state,
+				input: state.input + action.payload,
+			}
+		case InputActions.SetInput:
+			return {
+				...state,
+				input: action.payload,
+			}
         default:
             return state;
     }
 }
 
-export const initialRenderProps: RenderProps = {
-    header1: "Welcome to Advisors Excel ATM",
-    header2: "Please enter your account number",
-    body: "",
-    selectLeft: "",
-    selectRight: "",
-    selectCenter: "",
-};
 
 export function deriveRenderProps(
 	currentState: MachineState,
-    currentRenderProps: RenderProps,
     account: Account,
-    serverMessage?: string,
 ): RenderProps {
+	const defaultRenderProps: RenderProps = {
+		header1: "Welcome to Advisors Excel ATM",
+		header2: "Please enter your account number",
+		body: "",
+		selectLeft: "",
+		selectRight: "",
+		selectCenter: "",
+	};
+	
     switch (currentState.screen) {
         case Screen.LoggedOut:
-            return initialRenderProps;
+            return {
+				...defaultRenderProps,
+				body: currentState.input,
+			};
         case Screen.Menu:
             return {
-                ...currentRenderProps,
                 header1: `Your ${account.type} account balance is $${account.amount}`,
                 header2: "What would you like to do?",
                 selectLeft: "Deposit",
                 selectRight: "Withdraw",
                 selectCenter: "Logout",
+				body: currentState.input,
             };
         case Screen.Withdraw:
             return {
-				...currentRenderProps,
+				header1: `Your ${account.type} account balance is $${account.amount}`,
                 header2: "Enter withdrawal amount",
+				selectLeft: "",
                 selectRight: "Cancel",
+				selectCenter: "Logout",
+				body: currentState.input,
             };
         case Screen.Deposit:
             return {
-				...currentRenderProps,
+				header1: `Your ${account.type} account balance is $${account.amount}`,
                 header2: "Enter deposit amount",
                 selectLeft: "Cancel",
-            };
-		case Screen.Input:
-			return {
-				...currentRenderProps,
+				selectRight: "",
+				selectCenter: "Logout",
 				body: currentState.input,
-			}
-		case Screen.Clear:
-			return {
-				...currentRenderProps,
-				body: "",
-			}
-		case Screen.Enter:
-			return {
-				...currentRenderProps,
-				body: "Sending request...",
-			}
-        case Screen.ServerMessage:
-            return {
-                ...currentRenderProps,
-                body: serverMessage || "",
             };
         default:
-            return initialRenderProps;
+            return defaultRenderProps;
     }
 }

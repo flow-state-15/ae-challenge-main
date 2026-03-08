@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Box, Grid } from "@mui/material";
 // import { SignIn } from './components/SignIn';
 import { AccountDashboard } from "../components/AccountDashboard";
-import { account } from "../types/AppTypes";
+import { Account } from "../types/AppTypes";
 import Display from "../features/atm/Display";
 import Keypad from "../features/atm/Keypad";
 // import "../styles/App.css";
@@ -25,7 +25,7 @@ const appStyles = {
 
 // export const App = () => {
 // 	const [accountNumberError, setAccountNumberError] = useState(false);
-// 	const [account, setAccount] = useState<account | undefined>(undefined);
+// 	const [account, setAccount] = useState<Account | undefined>(undefined);
 
 // 	const signIn = async (accountNumber: number) => {
 // 		const response = await fetch(`http://localhost:3000/accounts/${accountNumber}`);

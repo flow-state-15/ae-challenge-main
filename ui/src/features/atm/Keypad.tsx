@@ -2,36 +2,40 @@ import { Box, Button, Typography, Paper } from "@mui/material";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 
 export default function Keypad({
-    onSelect,
+    onLeft,
+	onRight,
+	onCenter,
     onClear,
     onEnter,
     onNumber,
 }: {
-    onSelect: (body: string) => void;
-    onClear: (body: string) => void;
-    onEnter: (body: string) => void;
-    onNumber: (body: string) => void;
+    onLeft: () => void;
+    onRight: () => void;
+    onCenter: () => void;
+    onClear: () => void;
+    onEnter: () => void;
+    onNumber: (number: string) => void;
 }) {
     return (
         <Box sx={keypadStyles}>
             <Button 
 				variant="contained" 
 				sx={buttonStyles} 
-				onClick={() => onSelect("SELECT_LEFT")}
+				onClick={() => onLeft()}
 			>
                 <KeyboardArrowUpIcon fontSize="large" />
             </Button>
             <Button 
 				variant="contained" 
 				sx={buttonStyles} 
-				onClick={() => onSelect("SELECT_CENTER")}
+				onClick={() => onCenter()}
 			>
                 <KeyboardArrowUpIcon fontSize="large" />
             </Button>
             <Button 
 				variant="contained" 
 				sx={buttonStyles} 
-				onClick={() => onSelect("SELECT_RIGHT")}
+				onClick={() => onRight()}
 			>
                 <KeyboardArrowUpIcon fontSize="large" />
             </Button>
@@ -45,7 +49,7 @@ export default function Keypad({
             <Button 
 				variant="contained" 
 				sx={buttonStyles} 
-				onClick={() => onClear("CLEAR")}
+				onClick={() => onClear()}
 			>
                 Clear
             </Button>
@@ -59,7 +63,7 @@ export default function Keypad({
             <Button 
 				variant="contained" 
 				sx={buttonStyles} 
-				onClick={() => onEnter("ENTER")}
+				onClick={() => onEnter()}
 			>
                 Enter
             </Button>

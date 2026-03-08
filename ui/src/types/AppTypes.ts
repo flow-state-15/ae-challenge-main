@@ -20,28 +20,19 @@ export enum Screen {
 	Menu = "MENU",
 	Withdraw = "WITHDRAW",
 	Deposit = "DEPOSIT",
-	ServerMessage = "SERVER_MESSAGE",
-	Input = "INPUT",
-	Clear = "CLEAR",
-	Enter = "ENTER",
+}
+
+export enum InputActions {
+	AppendInput = "APPEND_INPUT",
+	SetInput = "SET_INPUT",
 }
 
 export type MachineState = {
 	screen: Screen;
-	selection: "SELECT_LEFT" | "SELECT_RIGHT" | "SELECT_CENTER" | "ENTER" | "CANCEL" | "CLEAR" | "NONE";
 	input: string;
 }
 
-export type SelectionType = Screen | "SELECT_LEFT" | "SELECT_RIGHT" | "SELECT_CENTER" | "CANCEL" | "NONE" | "RESET";
-
-export type KeypadAction = {
-	type: SelectionType
-	payload: string;
-}
-
-export type ServerAction = {
-	type: "SERVER_MESSAGE"
+export type ReducerAction = {
+	type: Screen | InputActions,
 	payload: string
 }
-
-export type ReducerAction = KeypadAction | ServerAction;

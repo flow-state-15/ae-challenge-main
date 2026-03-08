@@ -1,6 +1,6 @@
 import { Box, Paper, Typography } from "@mui/material";
 
-import { RenderProps } from "./machineTypes";
+import { RenderProps } from "../../types/AppTypes";
 
 export default function Display({
 	renderProps,

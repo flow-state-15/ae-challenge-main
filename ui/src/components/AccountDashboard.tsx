@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import { account } from "../types/AppTypes";
+import { Account } from "../types/AppTypes";
 import Paper from "@mui/material/Paper/Paper";
 import { Button, Card, CardContent, Grid, TextField } from "@mui/material";
 
 type AccountDashboardProps = {
-    account: account;
+    account: Account;
     signOut: () => Promise<void>;
 };
 
