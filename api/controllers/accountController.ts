@@ -4,9 +4,9 @@ import { validateAccountID } from "../utils/validations";
 
 export async function getAccount(req: Request, res: Response) {
   const { accountID } = req.params;
-  const validatedAccountID = validateAccountID(accountID);
-
+  
   try {
+	const validatedAccountID = validateAccountID(accountID);
     const account = await getAccountService(validatedAccountID);
     return res.status(200).send(account);
   } catch (err) {

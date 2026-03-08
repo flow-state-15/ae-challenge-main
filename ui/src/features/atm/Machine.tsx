@@ -1,14 +1,21 @@
 import { useState, useReducer } from "react";
 import { Box, Typography } from "@mui/material";
+import { useQueryClient } from "@tanstack/react-query";
 
 import Display from "./Display";
 import Keypad from "./Keypad";
 import { InputActions, Screen } from "../../types/AppTypes";
 import { initialMachineState, machineReducer, deriveRenderProps } from "./machineState";
+import { fetchAccount, useLoginMutation, useAccountQuery } from "./machineQueries";
+import { queryClient } from "../../utils/appUtils";
 
 export default function Machine() {
+	const queryClient = useQueryClient();
+	console.log(queryClient)
     const [state, dispatch] = useReducer(machineReducer, initialMachineState);
-	const account = {accountNumber: 1234567890, name: "John Doe", amount: 1000, type: "Checking", creditLimit: 1000} // TODO: get account from query
+	const { data: account,  } = useAccountQuery(1)asasasa
+	const { mutate: login } = useLoginMutation();
+	// console.log("login mutation: ", mutation)
     
 	const renderProps = deriveRenderProps(state, account);
 	console.log("renderProps", renderProps);
@@ -52,6 +59,7 @@ export default function Machine() {
 		if (state.screen === Screen.LoggedOut) {
 			// on success
 			// TODO: call login query with current input state
+			const result = login(state.input)
 			const success = state.input === "1234567890";
 			if (success) {
 				return dispatch({ type: Screen.Menu, payload: "" })

@@ -1,5 +1,5 @@
 /*
-state machine logic and transitions
+SPEC: state machine logic and transitions
 
 Machine component owns state reducer and async hooks
 views set display values -> either hard coded or from server
@@ -106,11 +106,13 @@ export function machineReducer(state = initialMachineState, action: ReducerActio
 			return {
 				...state,
 				screen: Screen.Withdraw,
+				input: action.payload,
 			}
 		case Screen.Deposit:
 			return {
 				...state,
 				screen: Screen.Deposit,
+				input: action.payload,
 			}
 		case InputActions.AppendInput:
 			return {
@@ -130,7 +132,7 @@ export function machineReducer(state = initialMachineState, action: ReducerActio
 
 export function deriveRenderProps(
 	currentState: MachineState,
-    account: Account,
+    account: Account | any,
 ): RenderProps {
 	const defaultRenderProps: RenderProps = {
 		header1: "Welcome to Advisors Excel ATM",
@@ -140,6 +142,7 @@ export function deriveRenderProps(
 		selectRight: "",
 		selectCenter: "",
 	};
+	if (!account) return defaultRenderProps;
 	
     switch (currentState.screen) {
         case Screen.LoggedOut:
