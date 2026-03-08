@@ -2,25 +2,25 @@ import { useState } from "react";
 import { Box, Grid } from "@mui/material";
 // import { SignIn } from './components/SignIn';
 import { AccountDashboard } from "../components/AccountDashboard";
-import { account } from "../Types/Account";
+import { account } from "../types/AppTypes";
 import Display from "../features/atm/Display";
 import Keypad from "../features/atm/Keypad";
 // import "../styles/App.css";
 import Machine from "../features/atm/Machine";
 
 export default function App() {
-	return (
-		<Box sx={appStyles}>
-			<Machine />
-		</Box>
-	);
+    return (
+        <Box sx={appStyles}>
+            <Machine />
+        </Box>
+    );
 }
 
 const appStyles = {
-	border: "10px dashed orange",
-	margin: "auto",
-	width: "100%",
-	height: "100%",
+    border: "10px dashed orange",
+    margin: "auto",
+    width: "100%",
+    height: "100%",
 };
 
 // export const App = () => {

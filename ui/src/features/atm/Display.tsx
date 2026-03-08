@@ -1,23 +1,23 @@
 import { Box, Paper, Typography } from "@mui/material";
 
+import { RenderProps } from "./machineTypes";
+
 export default function Display({
-	displayHeader,
-	displayBody,
+	renderProps,
 }: {
-	displayHeader: string;
-	displayBody: string;
+	renderProps: RenderProps;
 }) {
 	return (
 		<Paper>
 			<Box sx={displayStyles}>
 				<Typography
-					variant="h6"
+					variant="h5"
 					maxWidth="80%"
 					overflow="hidden"
 					textOverflow="ellipsis"
 					whiteSpace="nowrap"
 				>
-					{displayHeader}
+					{renderProps.header1}
 				</Typography>
 				<Typography
 					variant="h6"
@@ -26,8 +26,28 @@ export default function Display({
 					textOverflow="ellipsis"
 					whiteSpace="nowrap"
 				>
-					{displayBody}
+					{renderProps.header2}
 				</Typography>
+				<Typography
+					variant="h4"
+					maxWidth="80%"
+					overflow="hidden"
+					textOverflow="ellipsis"
+					whiteSpace="nowrap"
+				>
+					{renderProps.body}
+				</Typography>
+				<Box sx={selectStyles}>
+					<Typography variant="body1">
+						{renderProps.selectLeft}
+					</Typography>
+					<Typography variant="body1">
+						{renderProps.selectCenter}
+					</Typography>
+					<Typography variant="body1">
+						{renderProps.selectRight}
+					</Typography>
+				</Box>
 			</Box>
 		</Paper>
 	);
@@ -40,6 +60,13 @@ const displayStyles = {
 	display: "flex",
 	flexDirection: "column",
 	justifyContent: "flex-start",
+	alignItems: "center",
+	gap: 2,
+};
+
+const selectStyles = {
+	display: "flex",
+	justifyContent: "space-between",
 	alignItems: "center",
 	gap: 2,
 };

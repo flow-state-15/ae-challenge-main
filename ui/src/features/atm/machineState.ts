@@ -84,44 +84,127 @@ logged in select buttons:
 				- if error, change display body to [server error message] || "Deposit failed"
 */
 
-import { MachineAction, MachineState } from "./machineTypes";
+import { Account, MachineState, ReducerAction, RenderProps, Screen } from "../../types/AppTypes";
 
 export const initialMachineState: MachineState = {
-    screen: "LOGGED_OUT",
-    select: "",
+    screen: Screen.LoggedOut,
+    selection: "NONE",
     input: "",
 };
 
-export function machineReducer(state = initialMachineState, action: MachineAction): MachineState {
+export function machineReducer(state = initialMachineState, action: ReducerAction): MachineState {
     switch (action.type) {
-		case "SELECT_LEFT":
-			return {}
-		case "SELECT_RIGHT":
-			return {}
-		case "SELECT_CENTER":
-			return {}
-		case "INPUT_NUMBER":
-			return {}
-		case "CLEAR":
-			return {}
-		case "ENTER":
-			return {}
+        case "SELECT_LEFT":
+            return {
+                ...state,
+                selection: "SELECT_LEFT",
+            };
+        case "SELECT_RIGHT":
+            return {
+                ...state,
+                selection: "SELECT_RIGHT",
+            };
+        case "SELECT_CENTER":
+            return {
+                ...state,
+                selection: "SELECT_CENTER",
+            };
+        case "ENTER":
+            return {
+                ...state,
+                selection: "ENTER",
+				screen: Screen.Enter,
+				input: "",
+            };
+        case "CANCEL":
+            return {
+                ...state,
+                selection: "CANCEL",
+				input: "",
+				screen: Screen.Menu,
+            };
+        case "CLEAR":
+            return {
+                ...state,
+                input: "",
+            };
+        case "INPUT":
+            return {
+                ...state,
+                input: state.input + action.payload,
+            };
+        case "SERVER_MESSAGE":
+            return {
+                ...state,
+                input: action.payload,
+            };
+		case "RESET":
+			return initialMachineState;
         default:
             return state;
     }
 }
 
-export function deriveRenderProps(state: MachineState, queryResult: string) {
-    switch (state.screen) {
-        case "SET_DISPLAY_HEADER1":
+export const initialRenderProps: RenderProps = {
+    header1: "Welcome to Advisors Excel ATM",
+    header2: "Please enter your account number",
+    body: "",
+    selectLeft: "",
+    selectRight: "",
+    selectCenter: "",
+};
+
+export function deriveRenderProps(
+	currentState: MachineState,
+    currentRenderProps: RenderProps,
+    account: Account,
+    serverMessage?: string,
+): RenderProps {
+    switch (currentState.screen) {
+        case Screen.LoggedOut:
+            return initialRenderProps;
+        case Screen.Menu:
             return {
-                displayHeader1: state.displayHeader1,
+                ...currentRenderProps,
+                header1: `Your ${account.type} account balance is $${account.amount}`,
+                header2: "What would you like to do?",
+                selectLeft: "Deposit",
+                selectRight: "Withdraw",
+                selectCenter: "Logout",
             };
-        case "SET_DISPLAY_HEADER2":
+        case Screen.Withdraw:
             return {
-                displayHeader2: state.displayHeader2,
+				...currentRenderProps,
+                header2: "Enter withdrawal amount",
+                selectRight: "Cancel",
+            };
+        case Screen.Deposit:
+            return {
+				...currentRenderProps,
+                header2: "Enter deposit amount",
+                selectLeft: "Cancel",
+            };
+		case Screen.Input:
+			return {
+				...currentRenderProps,
+				body: currentState.input,
+			}
+		case Screen.Clear:
+			return {
+				...currentRenderProps,
+				body: "",
+			}
+		case Screen.Enter:
+			return {
+				...currentRenderProps,
+				body: "Sending request...",
+			}
+        case Screen.ServerMessage:
+            return {
+                ...currentRenderProps,
+                body: serverMessage || "",
             };
         default:
-            return {};
+            return initialRenderProps;
     }
 }
