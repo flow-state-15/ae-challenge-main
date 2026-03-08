@@ -1,12 +1,12 @@
-import { useState } from "react";
+import { useState, useReducer } from "react";
 import { Box, Typography } from "@mui/material";
+
 import Display from "./Display";
 import Keypad from "./Keypad";
+import { RenderProps } from "./machineTypes";
 
 export default function Machine() {
-    const [displayHeader, setDisplayHeader] = useState("");
-    const [displayBody, setDisplayBody] = useState("");
-    const [currentInput, setCurrentInput] = useState("");
+    const [renderProps, setRenderProps] = useState<RenderProps>() 
 
     const handleButtonClick = (input: string) => {
 		setCurrentInput((prev) => prev + input);

@@ -1,38 +1,66 @@
 import { Box, Button, Typography, Paper } from "@mui/material";
+import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 
 export default function Keypad({
-    handleButtonClick,
+    onSelect,
+    onClear,
+    onEnter,
+    onNumber,
 }: {
-    handleButtonClick: (body: string) => void;
+    onSelect: (body: string) => void;
+    onClear: (body: string) => void;
+    onEnter: (body: string) => void;
+    onNumber: (body: string) => void;
 }) {
     return (
         <Box sx={keypadStyles}>
-            <Button variant="contained" sx={buttonStyles}>
-                Cancel
+            <Button 
+				variant="contained" 
+				sx={buttonStyles} 
+				onClick={() => onSelect("SELECT_LEFT")}
+			>
+                <KeyboardArrowUpIcon fontSize="large" />
             </Button>
-            <Box sx={{ textAlign: "center" }}>
-                <Typography variant="h6">Advisors</Typography>
-                <Typography variant="h6">Excel</Typography>
-            </Box>
-            <Button variant="contained" sx={buttonStyles}>
-                Log Out
+            <Button 
+				variant="contained" 
+				sx={buttonStyles} 
+				onClick={() => onSelect("SELECT_CENTER")}
+			>
+                <KeyboardArrowUpIcon fontSize="large" />
+            </Button>
+            <Button 
+				variant="contained" 
+				sx={buttonStyles} 
+				onClick={() => onSelect("SELECT_RIGHT")}
+			>
+                <KeyboardArrowUpIcon fontSize="large" />
             </Button>
             {Array(9)
                 .fill(null)
                 .map((_, i) => (
                     <Box key={i}>
-                        <KeypadNumberButton handleButtonClick={handleButtonClick}>
-                            {i + 1}
-                        </KeypadNumberButton>
+                        <KeypadNumberButton onNumber={onNumber}>{i + 1}</KeypadNumberButton>
                     </Box>
                 ))}
-            <Button variant="contained" sx={buttonStyles}>
+            <Button 
+				variant="contained" 
+				sx={buttonStyles} 
+				onClick={() => onClear("CLEAR")}
+			>
                 Clear
             </Button>
-            <Button variant="contained" sx={buttonStyles}>
+            <Button 
+				variant="contained" 
+				sx={buttonStyles} 
+				onClick={() => onNumber("0")}
+			>
                 0
             </Button>
-            <Button variant="contained" sx={buttonStyles}>
+            <Button 
+				variant="contained" 
+				sx={buttonStyles} 
+				onClick={() => onEnter("ENTER")}
+			>
                 Enter
             </Button>
         </Box>
@@ -41,17 +69,17 @@ export default function Keypad({
 
 function KeypadNumberButton({
     children,
-    handleButtonClick,
+    onNumber,
 }: {
     children: number;
-    handleButtonClick: (body: string) => void;
+    onNumber: (number: string) => void;
 }) {
     return (
         <Button
             fullWidth
             variant="contained"
             sx={buttonStyles}
-            onClick={() => handleButtonClick(children.toString())}
+            onClick={() => onNumber(children.toString())}
         >
             {children}
         </Button>
@@ -61,7 +89,7 @@ function KeypadNumberButton({
 const keypadStyles = {
     display: "grid",
     gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
-    gap: 1.3,
+    gap: 1.5,
 };
 
 const buttonStyles = {
