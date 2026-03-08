@@ -1,5 +1,5 @@
 import { pool } from "../utils/db";
-import { Account, AccountValidationError } from "../../globalTypes";
+import { Account, AccountValidationError } from "../types";
 
 export async function getAccountService(accountId: number): Promise<Account> {
 	// prettier-ignore

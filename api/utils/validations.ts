@@ -1,5 +1,5 @@
 import Joi from "joi";
-import { Account } from "../../globalTypes";
+import { Account } from "../types";
 
 /*
 Project validation constraints:
