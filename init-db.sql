@@ -48,7 +48,8 @@ INSERT INTO accounts
 VALUES
     (3, 'Jills Credit', -3000, 'credit', 10000),
     (6, 'Bills Credit', -60000, 'credit', 60000),
-    (9, 'Nancy Credit', -90000, 'credit', 100000);
+    (9, 'Nancy Credit', -90000, 'credit', 100000),
+	(10, 'withdraw test', 0, 'credit', 100);
 
 /*
 validating some application constraints in sql for performance reasons.

@@ -84,7 +84,14 @@ logged in select buttons:
 				- if error, change display body to [server error message] || "Deposit failed"
 */
 
-import { Account, InputActions, MachineState, ReducerAction, RenderProps, Screen } from "../../types/AppTypes";
+import {
+    Account,
+    InputActions,
+    MachineState,
+    ReducerAction,
+    RenderProps,
+    Screen,
+} from "../../types/AppTypes";
 
 export const initialMachineState: MachineState = {
     screen: Screen.LoggedOut,
@@ -92,90 +99,86 @@ export const initialMachineState: MachineState = {
 };
 
 export function machineReducer(state = initialMachineState, action: ReducerAction): MachineState {
-	console.log("machineReducer", state, action);
     switch (action.type) {
-		case Screen.LoggedOut:
-			return initialMachineState;
-		case Screen.Menu:
-			return {
-				...state,
-				screen: Screen.Menu,
-				input: action.payload,
-			}
-		case Screen.Withdraw:
-			return {
-				...state,
-				screen: Screen.Withdraw,
-				input: action.payload,
-			}
-		case Screen.Deposit:
-			return {
-				...state,
-				screen: Screen.Deposit,
-				input: action.payload,
-			}
-		case InputActions.AppendInput:
-			return {
-				...state,
-				input: state.input + action.payload,
-			}
-		case InputActions.SetInput:
-			return {
-				...state,
-				input: action.payload,
-			}
+        case Screen.LoggedOut:
+            return initialMachineState;
+        case Screen.Menu:
+            return {
+                screen: Screen.Menu,
+                input: action.payload,
+            };
+        case Screen.Withdraw:
+            return {
+                screen: Screen.Withdraw,
+                input: action.payload,
+            };
+        case Screen.Deposit:
+            return {
+                screen: Screen.Deposit,
+                input: action.payload,
+            };
+        case InputActions.AppendInput:
+            return {
+                ...state,
+                input: isNaN(+state.input) ? action.payload : state.input + action.payload,
+            };
+        case InputActions.SetInput:
+            return {
+                ...state,
+                input: action.payload,
+            };
         default:
             return state;
     }
 }
 
-
 export function deriveRenderProps(
-	currentState: MachineState,
-    account: Account | any,
+    currentState: MachineState,
+    account: Account | undefined,
 ): RenderProps {
-	const defaultRenderProps: RenderProps = {
-		header1: "Welcome to Advisors Excel ATM",
-		header2: "Please enter your account number",
-		body: "",
-		selectLeft: "",
-		selectRight: "",
-		selectCenter: "",
-	};
-	if (!account) return defaultRenderProps;
-	
+    const defaultRenderProps: RenderProps = {
+        header1: "Welcome to Advisors Excel ATM",
+        header2: "Please enter your account number",
+        body: "",
+        selectLeft: "",
+        selectRight: "",
+        selectCenter: "",
+    };
     switch (currentState.screen) {
         case Screen.LoggedOut:
             return {
-				...defaultRenderProps,
-				body: currentState.input,
-			};
+                ...defaultRenderProps,
+                body: currentState.input,
+            };
         case Screen.Menu:
+            if (!account) return defaultRenderProps;
             return {
                 header1: `Your ${account.type} account balance is $${account.amount}`,
                 header2: "What would you like to do?",
                 selectLeft: "Deposit",
                 selectRight: "Withdraw",
                 selectCenter: "Logout",
-				body: currentState.input,
+                body: currentState.input,
             };
         case Screen.Withdraw:
+            if (!account) return defaultRenderProps;
             return {
-				header1: `Your ${account.type} account balance is $${account.amount}`,
+                header1: `Your ${account.type} account balance is $${account.amount}`,
                 header2: "Enter withdrawal amount",
-				selectLeft: "",
+                selectLeft: "",
                 selectRight: "Cancel",
-				selectCenter: "Logout",
-				body: currentState.input,
+                selectCenter: "Logout",
+                body: currentState.input,
             };
         case Screen.Deposit:
+            if (!account) return defaultRenderProps;
             return {
-				header1: `Your ${account.type} account balance is $${account.amount}`,
+                header1: `Your ${account.type} account balance is $${account.amount}`,
                 header2: "Enter deposit amount",
                 selectLeft: "Cancel",
-				selectRight: "",
-				selectCenter: "Logout",
-				body: currentState.input,
+                selectRight: "",
+                selectCenter: "Logout",
+                body: currentState.input,
             };
         default:
             return defaultRenderProps;

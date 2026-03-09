@@ -10,41 +10,43 @@ export default function Display({
 	return (
 		<Paper>
 			<Box sx={displayStyles}>
+				<Box
+				sx={headerStyles}
+				>
+
 				<Typography
-					variant="h5"
-					maxWidth="80%"
+					variant="h6"
 					overflow="hidden"
 					textOverflow="ellipsis"
 					whiteSpace="nowrap"
-				>
+					>
 					{renderProps.header1}
 				</Typography>
 				<Typography
-					variant="h6"
-					maxWidth="80%"
-					overflow="hidden"
+					variant="body1"
+					overflow="wrap"
 					textOverflow="ellipsis"
 					whiteSpace="nowrap"
-				>
+					>
 					{renderProps.header2}
 				</Typography>
+					</Box>
 				<Typography
-					variant="h4"
-					maxWidth="80%"
-					overflow="hidden"
+					variant="h5"
+					overflow="wrap"
 					textOverflow="ellipsis"
 					whiteSpace="nowrap"
 				>
 					{renderProps.body}
 				</Typography>
 				<Box sx={selectStyles}>
-					<Typography variant="body1">
+					<Typography variant="h6">
 						{renderProps.selectLeft}
 					</Typography>
-					<Typography variant="body1">
+					<Typography variant="h6">
 						{renderProps.selectCenter}
 					</Typography>
-					<Typography variant="body1">
+					<Typography variant="h6">
 						{renderProps.selectRight}
 					</Typography>
 				</Box>
@@ -54,19 +56,30 @@ export default function Display({
 }
 
 const displayStyles = {
-	padding: 2,
-	minHeight: "10rem",
-	fontSize: "1.2rem",
+	minHeight: "14rem",
+	fontSize: "1rem",
 	display: "flex",
 	flexDirection: "column",
-	justifyContent: "flex-start",
+	justifyContent: "space-between",
 	alignItems: "center",
 	gap: 2,
 };
 
-const selectStyles = {
+const headerStyles = {
+	width: "100%",
+	maxHeight: "40%",
+	fontSize: "1rem",
 	display: "flex",
+	flexDirection: "column",
 	justifyContent: "space-between",
 	alignItems: "center",
-	gap: 2,
+	gap: 1,
+}
+
+const selectStyles = {
+	display: "grid",
+	gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
+	gap: 1.5,
+	width: "100%",
+	textAlign: "center"
 };

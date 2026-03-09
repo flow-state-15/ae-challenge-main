@@ -54,10 +54,10 @@ export function validateDepositRequestDB(amount: number, account: Account): true
 	- Deposit up to zero for credit accounts
 	*/
 	if (account.type !== "credit" && amount > 1000) {
-		throw new Error("Cannot deposit more than $1,000 per transaction.");
+		throw new Error("Deposit limit exceeded.");
 	}
 	if (account.type === "credit" && amount > Math.abs(account.amount)) {
-		throw new Error("Balance will exceed credit limit.");
+		throw new Error("Deposit limit exceeded.");
 	}
 	return true;
 }

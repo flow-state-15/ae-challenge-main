@@ -1,26 +1,19 @@
-import { useState, useReducer } from "react";
-import { Box, Typography } from "@mui/material";
+import { useReducer } from "react";
+import { Box } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
 
 import Display from "./Display";
 import Keypad from "./Keypad";
-import { InputActions, Screen } from "../../types/AppTypes";
+import { Account, InputActions, Screen } from "../../types/AppTypes";
 import { initialMachineState, machineReducer, deriveRenderProps } from "./machineState";
-import { fetchAccount, useLoginMutation, useAccountQuery } from "./machineQueries";
-import { queryClient } from "../../utils/appUtils";
+import { accountQueryKey, fetchAccount, fetchDeposit, fetchWithdraw } from "./machineQueries";
 
 export default function Machine() {
-	const queryClient = useQueryClient();
-	console.log(queryClient)
+    const queryClient = useQueryClient();
     const [state, dispatch] = useReducer(machineReducer, initialMachineState);
-	const { data: account,  } = useAccountQuery(1)asasasa
-	const { mutate: login } = useLoginMutation();
-	// console.log("login mutation: ", mutation)
-    
-	const renderProps = deriveRenderProps(state, account);
-	console.log("renderProps", renderProps);
-    // on logout these functions will do nothing
-    // if there's not render props for the selection button, there shoud be no function loaded into state
+    const account = queryClient.getQueryData<Account>(accountQueryKey);
+    const renderProps = deriveRenderProps(state, account);
+
     const handleSelectLeft = () => {
         if (state.screen === Screen.Menu) {
             dispatch({ type: Screen.Deposit, payload: "" });
@@ -45,7 +38,7 @@ export default function Machine() {
     const handleSelectLogout = () => {
         if (state.screen === Screen.LoggedOut) return;
 
-        // TODO: call logout query
+        queryClient.removeQueries({ queryKey: accountQueryKey });
         dispatch({ type: Screen.LoggedOut, payload: "" });
     };
 
@@ -53,38 +46,52 @@ export default function Machine() {
         dispatch({ type: InputActions.SetInput, payload: "" });
     };
 
-    const handleEnter = () => {
-		// maybe call a settimeout to go back to menu on success
-		// errors get displayed and no screen change. only input change
-		if (state.screen === Screen.LoggedOut) {
-			// on success
-			// TODO: call login query with current input state
-			const result = login(state.input)
-			const success = state.input === "1234567890";
-			if (success) {
-				return dispatch({ type: Screen.Menu, payload: "" })
-			}
 
-			if (!success) {
-				return dispatch({ type: InputActions.SetInput, payload: "Error Logging in" })
-			}
-		}
+    const handleEnter = async () => {
+		if (!state.input) return;
+        if (state.screen === Screen.LoggedOut) {
+            try {
+                await queryClient.fetchQuery({
+                    queryKey: accountQueryKey,
+                    queryFn: () => fetchAccount(state.input),
+                });
+                return dispatch({ type: Screen.Menu, payload: "" });
+            } catch (e) {
+				const error = e as Error;
+                return dispatch({
+                    type: InputActions.SetInput,
+                    // payload: error instanceof Error ? error.message : "Error logging in",
+					payload: error.message
+                });
+            }
+        }
+
+        if (!account || !account.account_number) return;
 
         if (state.screen === Screen.Deposit) {
-            // TODO: call deposit query with current input state
-			// TODO: on error dispatch server message
-			const result = "testing server"
-
-			if (false) {
-				return dispatch({type: InputActions.SetInput, payload: result})
-			}
-			// success response
-            return dispatch({ type: Screen.Menu, payload: "" });
+            try {
+                await queryClient.fetchQuery({
+                    queryKey: accountQueryKey,
+                    queryFn: () => fetchDeposit(account.account_number, state.input),
+                });
+                return dispatch({ type: Screen.Menu, payload: "" });
+            } catch (e) {
+                const error = e as Error;
+                return dispatch({ type: InputActions.SetInput, payload: error.message });
+            }
         }
 
         if (state.screen === Screen.Withdraw) {
-            //TODO: call withdraw query with current input state
-            return dispatch({ type: InputActions.SetInput, payload: "" });
+            try {
+                await queryClient.fetchQuery({
+                    queryKey: accountQueryKey,
+                    queryFn: () => fetchWithdraw(account.account_number, state.input),
+                });
+                dispatch({ type: Screen.Menu, payload: "" });
+            } catch (e) {
+                const error = e as Error;
+                dispatch({ type: InputActions.SetInput, payload: error.message });
+            }	
         }
     };
 

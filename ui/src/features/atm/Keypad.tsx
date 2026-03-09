@@ -102,4 +102,5 @@ const buttonStyles = {
     fontSize: "1.2rem",
     backgroundColor: "rgb(205, 208, 215, 0.5)",
     color: "black",
+	'&:hover': { backgroundColor: "silver" }
 };

@@ -12,7 +12,7 @@ export async function getAccount(req: Request, res: Response) {
   } catch (err) {
     const error = err as Error;
     console.error(err);
-    return res.status(404).send({ "Account not found": error.message });
+    return res.status(404).send({ message: error.message });
   }
 }
 

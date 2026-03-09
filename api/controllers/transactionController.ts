@@ -35,7 +35,7 @@ export async function withdraw(req: Request, res: Response) {
 	} catch (err) {
 		const error = err as Error;
 		console.error(err);
-		return res.status(400).send(error.message);
+		return res.status(400).send({ message: error.message });
 	}
 }
 
@@ -58,7 +58,7 @@ export async function deposit(req: Request, res: Response) {
 	} catch (err) {
 		const error = err as Error;
 		console.error(err);
-		return res.status(400).send(error.message);
+		return res.status(400).send({message: error.message});
 	}
 }
 

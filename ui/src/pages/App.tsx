@@ -11,7 +11,6 @@ export default function App() {
 }
 
 const appStyles = {
-    border: "10px dashed orange",
     margin: "auto",
     width: "100%",
     height: "100%",
