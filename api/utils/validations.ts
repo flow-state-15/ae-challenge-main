@@ -19,7 +19,7 @@ We throw in validations to keep controller clean and better error DX
 export function validateAccountID(accountID: string) {
 	const { error, value } = Joi.number().positive().min(1).required().validate(accountID);
 	if (error) {
-		throw new Error("INVALID_ACCOUNT_ID");
+		throw new Error("Invalid account ID.");
 	}
 	return value;
 }
@@ -27,7 +27,7 @@ export function validateAccountID(accountID: string) {
 export function validateAmount(amount: number) {
 	const { error, value } = Joi.number().positive().min(1).required().validate(amount);
 	if (error) {
-		throw new Error("INVALID_AMOUNT");
+		throw new Error("Invalid amount.");
 	}
 	return value;
 }
@@ -57,7 +57,7 @@ export function validateDepositRequestDB(amount: number, account: Account): true
 		throw new Error("Deposit limit exceeded.");
 	}
 	if (account.type === "credit" && amount > Math.abs(account.amount)) {
-		throw new Error("Deposit limit exceeded.");
+		throw new Error("Amount exceeds 0 balance.");
 	}
 	return true;
 }
@@ -76,7 +76,7 @@ export function validateWithdrawalRequestDB(
 		throw new Error("Cannot withdraw more than $400 in 24 hours.");
 	}
 	if (account.type !== "credit" && amount > account.amount) {
-		throw new Error("Cannot withdraw more than account balance.");
+		throw new Error("Cannot withdraw more than balance.");
 	}
 	if (account.type === "credit" && amount + Math.abs(account.amount) > account.credit_limit) {
 		throw new Error("Cannot withdraw more than credit limit.");

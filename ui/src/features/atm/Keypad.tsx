@@ -3,8 +3,8 @@ import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 
 export default function Keypad({
     onLeft,
-	onRight,
-	onCenter,
+    onRight,
+    onCenter,
     onClear,
     onEnter,
     onNumber,
@@ -18,25 +18,13 @@ export default function Keypad({
 }) {
     return (
         <Box sx={keypadStyles}>
-            <Button 
-				variant="contained" 
-				sx={buttonStyles} 
-				onClick={() => onLeft()}
-			>
+            <Button variant="contained" sx={buttonStyles} onClick={() => onLeft()}>
                 <KeyboardArrowUpIcon fontSize="large" />
             </Button>
-            <Button 
-				variant="contained" 
-				sx={buttonStyles} 
-				onClick={() => onCenter()}
-			>
+            <Button variant="contained" sx={buttonStyles} onClick={() => onCenter()}>
                 <KeyboardArrowUpIcon fontSize="large" />
             </Button>
-            <Button 
-				variant="contained" 
-				sx={buttonStyles} 
-				onClick={() => onRight()}
-			>
+            <Button variant="contained" sx={buttonStyles} onClick={() => onRight()}>
                 <KeyboardArrowUpIcon fontSize="large" />
             </Button>
             {Array(9)
@@ -46,25 +34,13 @@ export default function Keypad({
                         <KeypadNumberButton onNumber={onNumber}>{i + 1}</KeypadNumberButton>
                     </Box>
                 ))}
-            <Button 
-				variant="contained" 
-				sx={buttonStyles} 
-				onClick={() => onClear()}
-			>
+            <Button variant="contained" sx={buttonStyles} onClick={() => onClear()}>
                 Clear
             </Button>
-            <Button 
-				variant="contained" 
-				sx={buttonStyles} 
-				onClick={() => onNumber("0")}
-			>
+            <Button variant="contained" sx={buttonStyles} onClick={() => onNumber("0")}>
                 0
             </Button>
-            <Button 
-				variant="contained" 
-				sx={buttonStyles} 
-				onClick={() => onEnter()}
-			>
+            <Button variant="contained" sx={buttonStyles} onClick={() => onEnter()}>
                 Enter
             </Button>
         </Box>
@@ -102,5 +78,5 @@ const buttonStyles = {
     fontSize: "1.2rem",
     backgroundColor: "rgb(205, 208, 215, 0.5)",
     color: "black",
-	'&:hover': { backgroundColor: "silver" }
+    "&:hover": { backgroundColor: "silver" },
 };

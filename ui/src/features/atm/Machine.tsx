@@ -46,9 +46,8 @@ export default function Machine() {
         dispatch({ type: InputActions.SetInput, payload: "" });
     };
 
-
     const handleEnter = async () => {
-		if (!state.input) return;
+        if (!state.input) return;
         if (state.screen === Screen.LoggedOut) {
             try {
                 await queryClient.fetchQuery({
@@ -57,11 +56,10 @@ export default function Machine() {
                 });
                 return dispatch({ type: Screen.Menu, payload: "" });
             } catch (e) {
-				const error = e as Error;
+                const error = e as Error;
                 return dispatch({
                     type: InputActions.SetInput,
-                    // payload: error instanceof Error ? error.message : "Error logging in",
-					payload: error.message
+                    payload: error.message,
                 });
             }
         }
@@ -91,7 +89,7 @@ export default function Machine() {
             } catch (e) {
                 const error = e as Error;
                 dispatch({ type: InputActions.SetInput, payload: error.message });
-            }	
+            }
         }
     };
 
