@@ -4,7 +4,7 @@ import transactionController from "../controllers/transactionController";
 
 const router = express.Router();
 
-router.put("/:accountID/withdraw", transactionController.withdraw);
-router.put("/:accountID/deposit", transactionController.deposit);
+router.post("/:accountID/withdraw", transactionController.withdraw);
+router.post("/:accountID/deposit", transactionController.deposit);
 
 export default router;

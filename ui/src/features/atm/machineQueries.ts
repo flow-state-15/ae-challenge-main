@@ -15,7 +15,7 @@ export async function fetchAccount(accountId: string): Promise<Account> {
 
 export async function fetchDeposit(accountId: number, amount: string) {
     const response = await fetch(`http://localhost:3000/transactions/${accountId}/deposit`, {
-        method: "PUT",
+        method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ amount }),
     });
@@ -30,7 +30,7 @@ export async function fetchDeposit(accountId: number, amount: string) {
 
 export async function fetchWithdraw(accountId: number, amount: string) {
     const response = await fetch(`http://localhost:3000/transactions/${accountId}/withdraw`, {
-        method: "PUT",
+        method: "POST",
         headers: {
             "Content-Type": "application/json",
         },
