@@ -145,33 +145,33 @@ export function deriveRenderProps(
         selectCenter: "",
     };
     switch (currentState.screen) {
-        case Screen.LoggedOut:
-            return {
-                ...defaultRenderProps,
+		case Screen.LoggedOut:
+			return {
+				...defaultRenderProps,
                 body: currentState.input,
             };
-        case Screen.Menu:
-            if (!account) return defaultRenderProps;
+			case Screen.Menu:
+			if (!account) return defaultRenderProps;
             return {
-                header1: `Your ${account.type} account balance is $${account.amount}`,
+				header1: `Your ${account.type} account balance is $${account.amount}`,
                 header2: "What would you like to do?",
                 selectLeft: "Deposit",
                 selectRight: "Withdraw",
                 selectCenter: "Logout",
                 body: currentState.input,
             };
-        case Screen.Withdraw:
-            if (!account) return defaultRenderProps;
+			case Screen.Withdraw:
+			if (!account) return defaultRenderProps;
             return {
-                header1: `Your ${account.type} account balance is $${account.amount}`,
+				header1: `Your ${account.type} account balance is $${account.amount}`,
                 header2: "Enter withdrawal amount",
                 selectLeft: "",
                 selectRight: "Cancel",
                 selectCenter: "Logout",
                 body: currentState.input,
             };
-        case Screen.Deposit:
-            if (!account) return defaultRenderProps;
+			case Screen.Deposit:
+			if (!account) return defaultRenderProps;
             return {
                 header1: `Your ${account.type} account balance is $${account.amount}`,
                 header2: "Enter deposit amount",

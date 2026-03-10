@@ -30,7 +30,6 @@ export async function withdraw(req: Request, res: Response) {
 
 		const updatedAccount = await withdrawService(validatedAccountID, validatedAmount);
 
-		console.log("withdrawal result: ", updatedAccount);
 		return res.status(200).send(updatedAccount);
 	} catch (err) {
 		const error = err as Error;
@@ -53,7 +52,6 @@ export async function deposit(req: Request, res: Response) {
 
 		const updatedAccount = await depositService(validatedAccountID, validatedAmount);
 
-		console.log("deposit result: ", updatedAccount);
 		return res.status(200).send(updatedAccount);
 	} catch (err) {
 		const error = err as Error;

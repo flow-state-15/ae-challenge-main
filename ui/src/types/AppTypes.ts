@@ -3,7 +3,7 @@ export type Account = {
     name: string;
     amount: number;
     type: string;
-    creditLimit: number;
+    credit_limit: number;
 };
 
 export type RenderProps = {
