@@ -113,3 +113,9 @@ export async function getDailyWithdrawalTotalService(accountId: number): Promise
 
 	return result.rows[0].total_user_withdrawals_24hr;
 }
+
+export async function getTransactions(accountId: number) {
+	const result = await pool.query(`SELECT * FROM transaction_history($1)`, [accountId]);
+	console.log("getTransactions: ", result)
+	return result.rows[0]
+}

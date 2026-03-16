@@ -3,6 +3,7 @@ import { Request, Response } from "express";
 import {
 	depositService,
 	getDailyWithdrawalTotalService,
+	getTransactions,
 	withdrawService,
 } from "../services/transactionServices";
 import {
@@ -60,4 +61,20 @@ export async function deposit(req: Request, res: Response) {
 	}
 }
 
-export default { withdraw, deposit };
+export async function transactionHistory(req: Request, res: Response) {
+	const { accountID } = req.params;
+
+	try {
+		const validId = validateAccountID(accountID);
+
+		// begin db calls
+		const result = await getTransactions(validId);
+		console.log("controller res: ", result)
+		return res.send(result)
+	} catch (e) {
+		const error = e as Error;
+		return res.status(422).send({ message: error.message })
+	}
+}
+
+export default { withdraw, deposit, transactionHistory };

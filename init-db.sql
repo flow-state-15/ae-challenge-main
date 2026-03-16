@@ -70,3 +70,11 @@ BEGIN
 	RETURN COALESCE(total, 0);
 END;
 $$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION transaction_history(accountId INTEGER)
+RETURNS TABLE(type TEXT, amount INTEGER, created_at TIMESTAMPTZ) AS $$
+	SELECT type, amount, created_at
+	FROM transactions
+	WHERE from_account = accountId
+	OR to_account = accountId;
+$$ LANGUAGE sql;
