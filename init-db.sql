@@ -5,7 +5,8 @@ CREATE TABLE accounts (
     name VARCHAR NOT NULL,
     amount INTEGER NOT NULL,
     type VARCHAR NOT NULL,
-    credit_limit INTEGER
+    credit_limit INTEGER,
+	account_tier VARCHAR NOT NULL DEFAULT 'system'
 );
 
 /*

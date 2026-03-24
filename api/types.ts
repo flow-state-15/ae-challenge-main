@@ -4,6 +4,7 @@ export type Account = {
 	amount: number;
 	type: "checking" | "savings" | "credit" | "system";
 	credit_limit: number;
+	account_tier: "premium" | "standard";
   };
   
   export type Transaction = {

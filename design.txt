@@ -1,0 +1,14 @@
+prem accounts
+- withdraw 400 in single transaction
+- withdraw 1000 in 24hr
+
+tier system
+
+('premium', 'standard')
+
+mutation -> account table
+-> account_tier VARCHAR NOT NULL DEFAULT 'standard'
+
+getAccountService -> 
+	{ 1, john, 1000, 'checking', NULL, 'premium' }
+

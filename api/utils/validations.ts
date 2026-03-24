@@ -37,9 +37,7 @@ export function validateWithdrawRequestSync(amount: number) {
 	- Withdraw amount up to 200 in a single transaction
 	- Withdraw amount is divisible by 5
 	*/
-	if (amount > 200) {
-		throw new Error("Withdrawal limit exceeded.");
-	}
+
 	if (amount % 5 !== 0) {
 		throw new Error("Withdrawals must be in increments of $5.");
 	}
@@ -53,6 +51,9 @@ export function validateDepositRequestDB(amount: number, account: Account): true
 	- Deposit amount up to 1000 for non-credit accounts
 	- Deposit up to zero for credit accounts
 	*/
+
+	//!! { 1, john, 1000, 'checking', NULL, 'premium }
+
 	if (account.type !== "credit" && amount > 1000) {
 		throw new Error("Deposit limit exceeded.");
 	}
@@ -72,6 +73,11 @@ export function validateWithdrawalRequestDB(
 	- Withdraw up to account balance for non-credit accounts
 	- Withdraw up to account credit limit for credit accounts
 	*/
+	// stateful dailies
+	if ((account.account_tier === "standard" &&  amount > 200) || (account.account_tier === "premium" && amount > 400)) {
+		throw new Error("Withdrawal limit exceeded.");
+	}
+
 	if (amount + currentWithdraws > 400) {
 		throw new Error("Cannot withdraw more than $400 in 24 hours.");
 	}
@@ -81,5 +87,12 @@ export function validateWithdrawalRequestDB(
 	if (account.type === "credit" && amount + Math.abs(account.amount) > account.credit_limit) {
 		throw new Error("Cannot withdraw more than credit limit.");
 	}
+
+
+	if (account.account_tier === "premium" && currentWithdraws > 1000) {
+		throw new Error("Cannot withdraw more than $1000 in 24 hours.")	
+	}
+
+
 	return true;
 }
